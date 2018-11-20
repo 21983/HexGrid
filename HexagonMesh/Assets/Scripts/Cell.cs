@@ -5,33 +5,37 @@ using UnityEngine.UI;
 public class Cell : MonoBehaviour
 {
     public Color color;
-
     public Transform hexMesh;
     Renderer rend;
 
-    private bool clicked = true;
+    private bool clicked;
 
     void Start()
     {
+        clicked = (Random.value < 0.5);
         hexMesh = this.gameObject.transform.GetChild(0);
         rend = hexMesh.GetComponent<Renderer>();
-        color = Random.ColorHSV();
+        SetColor();
         rend.material.color = color;
     }
-    public void ChangeColor()
+
+    public void SetColor()
     {
         if (!clicked)
         {
-            clicked = true;
-            color = Random.ColorHSV();
+            color = Color.black;
         }
         else
         {
-            clicked = false;
             color = Color.white;
         }
+    }
 
-            rend.material.color = color;
+    public void ChangeColor()
+    {
+        clicked = !clicked;
+        SetColor();
+        rend.material.color = color;
     }
 
 }

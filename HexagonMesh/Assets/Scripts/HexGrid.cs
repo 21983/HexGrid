@@ -4,8 +4,8 @@ using UnityEngine.UI;
 using UnityEngine;
 
 public class HexGrid : MonoBehaviour {
-    public int width = 6;
-    public int height = 6;
+    public int width = 15;
+    public int height = 15;
 
     public Cell cellPrefab;
 
@@ -34,8 +34,8 @@ public class HexGrid : MonoBehaviour {
             }
         }
         hexMesh = GetComponentInChildren<HexMesh>();
-        Camera.main.transform.position = new Vector3(width *5, height*15, 40);
-        Camera.main.orthographicSize = height / 15;
+        //Camera.main.transform.position = new Vector3(width *5, height*15, 40);
+        //Camera.main.orthographicSize = height / 15;
     }
 
     void Update()
@@ -57,9 +57,9 @@ public class HexGrid : MonoBehaviour {
     void CreateCell(int x, int z)
     {
         Vector3 position;
-        position.x = (x + z * 0.5f - z / 2) * (HexMetrics.innerRadius * 2f); 
+        position.x = (x + z * 0.5f - z / 2) * (HexMetrics.innerRadius * 2f) *1.05f; 
         position.y = 0f;
-        position.z = z * (HexMetrics.outerRadius * 1.5f);
+        position.z = z * (HexMetrics.outerRadius * 1.5f)* 1.05f;
 
         Cell cell = cells[x,z] = Instantiate<Cell>(cellPrefab);
         cell.transform.SetParent(transform, false);
@@ -69,7 +69,7 @@ public class HexGrid : MonoBehaviour {
         label.rectTransform.SetParent(gridCanvas.transform, false);
         label.rectTransform.anchoredPosition =
             new Vector2(position.x, position.z);
-        label.text = x.ToString() + "\n" + z.ToString();
+        //label.text = x.ToString() + "\n" + z.ToString();
     }
 
 
