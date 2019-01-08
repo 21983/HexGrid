@@ -6,28 +6,31 @@ public class Cell : MonoBehaviour
 {
     public Color color;
     public Transform hexMesh;
-    Renderer rend;
+    public Renderer rend;
+    public int x;
+    public int y;
 
-    private bool clicked;
+    public bool clicked;
 
     void Start()
     {
-        clicked = (Random.value < 0.5);
+        clicked = (Random.value < 0.4);
         hexMesh = this.gameObject.transform.GetChild(0);
         rend = hexMesh.GetComponent<Renderer>();
         SetColor();
-        rend.material.color = color;
     }
 
     public void SetColor()
     {
-        if (!clicked)
+        if (clicked)
         {
             color = Color.black;
+            rend.material.color = color;
         }
         else
         {
             color = Color.white;
+            rend.material.color = color;
         }
     }
 
@@ -35,7 +38,6 @@ public class Cell : MonoBehaviour
     {
         clicked = !clicked;
         SetColor();
-        rend.material.color = color;
     }
 
 }

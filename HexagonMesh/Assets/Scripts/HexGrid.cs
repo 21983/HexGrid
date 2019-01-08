@@ -7,15 +7,20 @@ public class HexGrid : MonoBehaviour {
     public int width = 15;
     public int height = 15;
 
+    public GameObject playerPrefab;
+    public GameObject player;
     public Cell cellPrefab;
+
+
+    private int playerStartPosX = 2;
+    private int playerStartPosY = 8;
 
     public Text cellLabelPrefab;
     Canvas gridCanvas;
 
     HexMesh hexMesh;
 
-    Cell[,] cells;
-
+    public Cell[,] cells;
 
 
     void Awake()
@@ -31,8 +36,13 @@ public class HexGrid : MonoBehaviour {
             for (int j = 0; j < width; j++)
             {
                 CreateCell(i, j);
+                
             }
         }
+        player = Instantiate(playerPrefab);
+        player.transform.position = cells[playerStartPosX, playerStartPosY].transform.position;
+        player.GetComponent<PlayerMovement>().PlayerX = playerStartPosX;
+        player.GetComponent<PlayerMovement>().PlayerY = playerStartPosY;
         hexMesh = GetComponentInChildren<HexMesh>();
         //Camera.main.transform.position = new Vector3(width *5, height*15, 40);
         //Camera.main.orthographicSize = height / 15;
@@ -46,13 +56,30 @@ public class HexGrid : MonoBehaviour {
             RaycastHit info;
             if (Physics.Raycast(ray, out info, Mathf.Infinity))
             {
-                Debug.Log("Mwoan");
-                var cell = info.collider.transform.parent.GetComponent<Cell>();
-                cell.ChangeColor();
+                if (info.collider.transform.tag == "Cell")
+                {
+                    Debug.Log("Mwoan");
+                    var cell = info.collider.transform.parent.GetComponent<Cell>();
+                    cell.ChangeColor();
+                }
             }
         }
-    }
+        if (Input.GetMouseButtonDown(1))
+        {
+            var ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+            RaycastHit info;
+            if (Physics.Raycast(ray, out info, Mathf.Infinity))
+            {
 
+                var cell = info.collider.GetComponent<Cell>();
+                var playerMove = player.GetComponent<PlayerMovement>();
+                playerMove.CreatePath(cell.x,cell.y);
+                playerMove.MovePlayer(new Vector3(cell.transform.position.x, cell.transform.position.y, cell.transform.position.z));
+
+            }
+        }
+
+     }
 
     void CreateCell(int x, int z)
     {
@@ -61,15 +88,12 @@ public class HexGrid : MonoBehaviour {
         position.y = 0f;
         position.z = z * (HexMetrics.outerRadius * 1.5f)* 1.05f;
 
-        Cell cell = cells[x,z] = Instantiate<Cell>(cellPrefab);
-        cell.transform.SetParent(transform, false);
-        cell.transform.localPosition = position;
+        cells[x,z] = Instantiate<Cell>(cellPrefab);
+        cells[x, z].x = x;
+        cells[x, z].y = z;
+        cells[x,z].transform.SetParent(transform, false);
+        cells[x,z].transform.localPosition = position;
 
-        Text label = Instantiate<Text>(cellLabelPrefab);
-        label.rectTransform.SetParent(gridCanvas.transform, false);
-        label.rectTransform.anchoredPosition =
-            new Vector2(position.x, position.z);
-        //label.text = x.ToString() + "\n" + z.ToString();
     }
 
 
